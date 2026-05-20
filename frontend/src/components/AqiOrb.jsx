@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from "framer-motion";
 
 function AqiOrb({ value = 72, status = "Moderate" }) {

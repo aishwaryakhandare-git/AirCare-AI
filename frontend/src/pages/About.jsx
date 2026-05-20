@@ -1,3 +1,4 @@
+import React from "react";
 import { Leaf, ShieldCheck, Wind } from "lucide-react";
 import GlassCard from "../components/GlassCard.jsx";
 

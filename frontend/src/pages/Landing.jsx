@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import React from "react";
 import { motion } from "framer-motion";
 import { BrainCircuit, Gauge, ShieldCheck, Wind } from "lucide-react";
 import AqiOrb from "../components/AqiOrb.jsx";

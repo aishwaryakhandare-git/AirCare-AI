@@ -1,4 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
+import React from "react";
 import { Activity, BarChart3, HeartPulse, Home, Info, MapPin, Moon, Sun } from "lucide-react";
 
 const links = [
