@@ -3,6 +3,10 @@ import { createCityWeather, createSuggestions } from "../data/mockAirQuality.js"
 
 const router = express.Router();
 
+router.get("/suggestions/:query", (request, response) => {
+  response.json(createSuggestions(request.params.query));
+});
+
 router.get("/:city", (request, response) => {
   const { city } = request.params;
 
@@ -12,10 +16,6 @@ router.get("/:city", (request, response) => {
   }
 
   response.json(createCityWeather(city));
-});
-
-router.get("/suggestions/:query", (request, response) => {
-  response.json(createSuggestions(request.params.query));
 });
 
 export default router;
