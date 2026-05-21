@@ -6,6 +6,7 @@ import AqiOrb from "../components/AqiOrb.jsx";
 import GlassCard from "../components/GlassCard.jsx";
 import Loader from "../components/Loader.jsx";
 import StatCard from "../components/StatCard.jsx";
+import { createLocalAirData, getLocalSuggestions } from "../utils/localAirData.js";
 
 function Dashboard() {
   const [city, setCity] = useState("Delhi");
@@ -15,13 +16,23 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
 
   async function fetchAirQuality(cityName) {
+    const cleanCity = cityName.trim();
+
+    if (cleanCity.length < 2) {
+      toast.error("Please enter at least 2 letters.");
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await api.get(`/air-quality/${cityName}`);
+      const response = await api.get(`/air-quality/${encodeURIComponent(cleanCity)}`);
       setAirData(response.data);
-      setCity(cityName);
+      setCity(response.data.city);
     } catch (error) {
-      toast.error("Could not load air quality data.");
+      const localData = createLocalAirData(cleanCity);
+      setAirData(localData);
+      setCity(localData.city);
+      toast.success("Showing demo AQI data. Start the backend for saved favorites.");
     } finally {
       setLoading(false);
     }
@@ -44,8 +55,12 @@ function Dashboard() {
       return;
     }
 
-    const response = await api.get(`/air-quality/suggestions/${text}`);
-    setSuggestions(response.data);
+    try {
+      const response = await api.get(`/air-quality/suggestions/${encodeURIComponent(text)}`);
+      setSuggestions(response.data);
+    } catch (error) {
+      setSuggestions(getLocalSuggestions(text));
+    }
   }
 
   function handleSubmit(event) {
@@ -71,6 +86,7 @@ function Dashboard() {
           value={query}
           onChange={(event) => handleSuggestionSearch(event.target.value)}
           placeholder="Search city or location"
+          autoComplete="off"
         />
         <button className="primary-btn" type="submit">Search</button>
         {suggestions.length > 0 && (
