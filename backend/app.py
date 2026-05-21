@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from data import create_city_weather, create_suggestions, create_weekly_analytics
 from database import get_connection, rows_to_dicts, setup_database
@@ -18,7 +21,10 @@ def home():
 
 @app.get("/api/air-quality/suggestions/<query>")
 def get_city_suggestions(query):
-    return jsonify(create_suggestions(query))
+    try:
+        return jsonify(create_suggestions(query))
+    except Exception:
+        return jsonify({"message": "Could not load live city suggestions."}), 503
 
 
 @app.get("/api/air-quality/<city>")
@@ -26,12 +32,25 @@ def get_air_quality(city):
     if len(city.strip()) < 2:
         return jsonify({"message": "Please enter a city name."}), 400
 
-    return jsonify(create_city_weather(city))
+    try:
+        air_quality = create_city_weather(city)
+    except RuntimeError as error:
+        return jsonify({"message": str(error)}), 503
+    except Exception:
+        return jsonify({"message": "Could not load AQI data right now."}), 503
+
+    if not air_quality:
+        return jsonify({"message": "Location not found."}), 404
+
+    return jsonify(air_quality)
 
 
 @app.get("/api/analytics/<city>")
 def get_analytics(city):
-    return jsonify(create_weekly_analytics(city))
+    try:
+        return jsonify(create_weekly_analytics(city))
+    except Exception:
+        return jsonify({"message": "Could not load live analytics data."}), 503
 
 
 @app.post("/api/recommendations")

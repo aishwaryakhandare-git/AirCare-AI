@@ -471,6 +471,7 @@ body[data-theme="light"] .stat-card p {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   gap: 22px;
+  margin-bottom: 18px;
 }
 
 .dashboard-orb {
@@ -495,6 +496,29 @@ body[data-theme="light"] .stat-card p {
   gap: 8px;
   color: rgba(238, 248, 255, 0.72);
   font-weight: 800;
+}
+
+.data-source {
+  width: 100%;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.pollutant-card {
+  margin-top: 18px;
+}
+
+.pollutant-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.pollutant-grid span {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .loader {
@@ -582,8 +606,20 @@ body[data-theme="light"] .stat-card p {
   color: #ffd166;
 }
 
+.satisfactory strong {
+  color: #9be564;
+}
+
+.moderately strong {
+  color: #ffd166;
+}
+
 .poor strong {
   color: #ff9f43;
+}
+
+.very strong {
+  color: #ff7b54;
 }
 
 .severe strong {
@@ -625,7 +661,8 @@ body[data-theme="light"] .stat-card p {
   .recommendation-grid,
   .favorite-grid,
   .about-grid,
-  .metric-grid {
+  .metric-grid,
+  .pollutant-grid {
     grid-template-columns: 1fr;
   }
 }

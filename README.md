@@ -16,6 +16,26 @@ Install all dependencies:
 npm run install:all
 ```
 
+For no-payment official India AQI, create a free data.gov.in API key and set it before starting.
+
+PowerShell:
+
+```bash
+$env:DATA_GOV_API_KEY="your_data_gov_key_here"
+```
+
+Command Prompt:
+
+```bash
+set DATA_GOV_API_KEY=your_data_gov_key_here
+```
+
+Optional: if you already have Google Cloud billing, you can use Google Air Quality API instead:
+
+```bash
+$env:GOOGLE_AIR_QUALITY_API_KEY="your_google_key_here"
+```
+
 Start frontend and backend together:
 
 ```bash
@@ -32,4 +52,4 @@ frontend/   React application
 backend/    Python Flask REST API and SQLite database
 ```
 
-The app uses generated demo weather/AQI data so it works without an external API key.
+AQI is sourced from CPCB Sameer National AQI via data.gov.in when `DATA_GOV_API_KEY` is set. Weather values are sourced from Open-Meteo.
