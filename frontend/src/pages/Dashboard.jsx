@@ -27,6 +27,11 @@ function Dashboard() {
       const response = await api.get(`/air-quality/${encodeURIComponent(cleanCity)}`);
       setAirData(response.data);
       setCity(response.data.city);
+
+      localStorage.setItem(
+        "lastCity",
+        response.data.city
+      );
     } catch (error) {
       setAirData(null);
       toast.error(error.response?.data?.message || "Could not load official India AQI data.");
