@@ -205,34 +205,58 @@ def fetch_data_gov_air_quality(city):
     last_update = None
 
     for record in records:
-        pollutant_average = number_from_record(
-        record,
-        ["avg_value"]
-    )
 
-    if pollutant_average is not None:
-        aqi_values.append(pollutant_average)
-        pollutant = text_from_record(record, ["prominent_pollutant", "pollutant_id", "pollutant", "Prominent Pollutant"])
-        station = text_from_record(record, ["station", "station_name", "Station", "monitoring_station"], "")
-        updated = text_from_record(record, ["last_update", "Last Update", "last_updated", "updated_at"], "")
-        pollutant_average = number_from_record(record, ["pollutant_avg", "avg_value", "average", "value"])
+        pollutant = text_from_record(
+            record,
+            ["prominent_pollutant",
+            "pollutant_id",
+            "pollutant"]
+        )
+
+        station = text_from_record(
+            record,
+            ["station",
+            "station_name"]
+        )
+
+        updated = text_from_record(
+            record,
+            ["last_update"]
+        )
+
+        pollutant_average = number_from_record(
+            record,
+            ["avg_value"]
+        )
+
+        if pollutant_average is not None:
+            aqi_values.append(pollutant_average)
 
         if station:
             stations.add(station)
 
-        if pollutant and pollutant != "N/A":
+        if pollutant != "N/A":
             dominant_pollutants.append(pollutant)
 
         if updated:
             last_update = updated
 
         if pollutant != "N/A" and pollutant_average is not None:
-            pollutants[pollutant.lower()] = pollutant_average
 
+            normalized = pollutant.lower()
+
+            if normalized == "ozone":
+                normalized = "o3"
+
+            elif normalized == "pm2.5":
+                normalized = "pm25"
+
+            pollutants[normalized] = pollutant_average
+    
     if not aqi_values:
         raise RuntimeError("Official CPCB AQI value was not available for this city.")
 
-    city_aqi = round(sum(aqi_values) / len(aqi_values))
+    city_aqi = round(max(aqi_values))
 
     return {
         "aqi": city_aqi,
