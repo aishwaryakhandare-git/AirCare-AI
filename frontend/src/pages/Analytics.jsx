@@ -4,7 +4,7 @@ import { api } from "../api.js";
 import GlassCard from "../components/GlassCard.jsx";
 
 function Analytics() {
-  const [city, setCity] = useState("Delhi");
+  const [city, setCity] = useState("");
   const [data, setData] = useState([]);
 
   async function loadAnalytics(cityName) {
@@ -12,9 +12,7 @@ function Analytics() {
     setData(response.data);
   }
 
-  useEffect(() => {
-    loadAnalytics("Delhi");
-  }, []);
+
 
   return (
     <div>

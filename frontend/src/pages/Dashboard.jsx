@@ -8,8 +8,8 @@ import Loader from "../components/Loader.jsx";
 import StatCard from "../components/StatCard.jsx";
 
 function Dashboard() {
-  const [city, setCity] = useState("Delhi");
-  const [query, setQuery] = useState("Delhi");
+  const [city, setCity] = useState("");
+  const [query, setQuery] = useState("");
   const [airData, setAirData] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -65,10 +65,6 @@ function Dashboard() {
     fetchAirQuality(query);
     setSuggestions([]);
   }
-
-  useEffect(() => {
-    fetchAirQuality("Delhi");
-  }, []);
 
   return (
     <div>
