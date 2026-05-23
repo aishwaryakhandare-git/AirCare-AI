@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { api } from "../api.js";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import StatCard from "../components/StatCard.jsx";
 
 function Landing() {
   const [heroData, setHeroData] = useState({
+    const location = useLocation();
     aqi: "--",
     status: "Search",
     city: ""
@@ -20,6 +21,8 @@ function Landing() {
 
       const savedCity =
         localStorage.getItem("lastCity");
+
+        console.log("Saved:", savedCity);
 
       if (!savedCity) return;
 
@@ -43,7 +46,7 @@ function Landing() {
 
     loadLastCity();
 
-  }, [window.location.pathname]);
+}, [location.pathname]);
 
   return (
     <div>
