@@ -32,6 +32,16 @@ function Dashboard() {
         "lastCity",
         response.data.city
       );
+
+      console.log(
+        "Saved city:",
+        response.data.city
+      );
+
+      console.log(
+        "Storage:",
+        localStorage.getItem("lastCity")
+      );
     } catch (error) {
       setAirData(null);
       toast.error(error.response?.data?.message || "Could not load official India AQI data.");
