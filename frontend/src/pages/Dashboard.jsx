@@ -30,12 +30,12 @@ function Dashboard() {
 
       localStorage.setItem(
         "lastCity",
-        response.data.city
+        cleanCity
       );
 
       console.log(
         "Saved city:",
-        response.data.city
+        cleanCity
       );
 
       console.log(

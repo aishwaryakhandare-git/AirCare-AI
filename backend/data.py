@@ -256,16 +256,19 @@ def fetch_data_gov_air_quality(city):
     if not aqi_values:
         raise RuntimeError("Official CPCB AQI value was not available for this city.")
 
-    city_aqi = round(max(aqi_values))
+    city_aqi = round(
+        sum(aqi_values) / max(len(aqi_values),1)
+    )
 
     return {
-        "aqi": city_aqi,
-        "displayName": "India National AQI",
-        "dominantPollutant": dominant_pollutants[0] if dominant_pollutants else "N/A",
-        "category": get_aqi_status(city_aqi),
-        "stationName": f"{len(stations) or len(records)} official monitoring station(s) averaged",
-        "updatedAt": last_update,
-        "pollutants": {
+            "aqi": city_aqi,
+            "displayName": "India National AQI",
+            "dominantPollutant": dominant_pollutants[0] if dominant_pollutants else "N/A",
+            "category": get_aqi_status(city_aqi),
+            "stationName": f"Based on {len(stations)} CPCB monitoring stations",
+            "updatedAt": last_update,
+
+            "pollutants": {
             "pm25": pollutants.get("pm2.5") or pollutants.get("pm25"),
             "pm10": pollutants.get("pm10"),
             "co": pollutants.get("co"),

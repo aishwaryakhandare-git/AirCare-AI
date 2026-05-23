@@ -12,9 +12,10 @@ function Landing() {
   const location = useLocation();
 
   const [heroData, setHeroData] = useState({
-    aqi: "--",
-    status: "Search",
-    city: ""
+    aqi: null,
+    status: "Welcome",
+    city: "",
+    message: "Search a city for personalized air insights"
   });
 
   useEffect(() => {
@@ -35,10 +36,29 @@ function Landing() {
             `/air-quality/${savedCity}`
           );
 
+        let healthMessage = "";
+
+        if (response.data.aqi <= 50) {
+          healthMessage = "Air looks clean today. Great for outdoor activities.";
+        }
+        else if (response.data.aqi <= 100) {
+          healthMessage = "Air quality is acceptable. Normal outdoor activity is okay.";
+        }
+        else if (response.data.aqi <= 150) {
+          healthMessage = "Sensitive groups should reduce long outdoor exposure.";
+        }
+        else if (response.data.aqi <= 200) {
+          healthMessage = "Consider wearing a mask outdoors.";
+        }
+        else {
+          healthMessage = "Poor air quality detected. Limit outdoor activity.";
+        }
+
         setHeroData({
           aqi: response.data.aqi,
           status: response.data.status,
-          city: response.data.city
+          city: response.data.city,
+          message: healthMessage
         });
 
       } catch(error){
@@ -49,7 +69,7 @@ function Landing() {
     loadLastCity();
 
   }, [location.pathname]);
-  
+
   return (
     <div>
       <section className="hero-section">
@@ -60,11 +80,13 @@ function Landing() {
           <h1>AirCare AI</h1>
           <p>
             {heroData.city &&
-            `Last searched: ${heroData.city}`}
+            `Last checked: ${heroData.city}`}
           </p>
+
           <p className="hero-text">
-            Track air quality, weather stress, UV exposure, and personal health guidance in one clean dashboard.
+            {heroData.message}
           </p>
+         
           <div className="hero-actions">
             <Link className="primary-btn" to="/dashboard">Open Dashboard</Link>
             <Link className="ghost-btn" to="/recommendations">View Health Tips</Link>
