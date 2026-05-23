@@ -233,8 +233,15 @@ def fetch_data_gov_air_quality(city):
 
             normalized = pollutant.lower()
 
-            # Only use AQI-driving pollutants
-            if normalized in ["pm2.5", "pm10"]:
+            # Use major AQI pollutants
+            if normalized in [
+                "pm2.5",
+                "pm10",
+                "ozone",
+                "no2",
+                "so2",
+                "co"
+            ]:
                 aqi_values.append(pollutant_average)
 
         if station:
@@ -264,10 +271,12 @@ def fetch_data_gov_air_quality(city):
     print("AQI VALUES:", aqi_values)
     print("TOTAL STATIONS:", len(aqi_values))
 
-    city_aqi = round(
-        sum(aqi_values) / max(len(aqi_values),1)
-    )
+    aqi_values.sort()
 
+    city_aqi = round(
+        aqi_values[int(len(aqi_values) * 0.75)]
+    )
+    
     return {
             "aqi": city_aqi,
             "displayName": "India National AQI",
