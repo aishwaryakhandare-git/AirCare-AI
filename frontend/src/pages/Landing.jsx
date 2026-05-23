@@ -43,7 +43,8 @@ function Landing() {
 
     loadLastCity();
 
-  }, []);
+  }, [window.location.pathname]);
+
   return (
     <div>
       <section className="hero-section">
