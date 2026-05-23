@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { api } from "../api.js";
 import { motion } from "framer-motion";
 import { BrainCircuit, Gauge, ShieldCheck, Wind } from "lucide-react";
 import AqiOrb from "../components/AqiOrb.jsx";
@@ -7,6 +8,42 @@ import GlassCard from "../components/GlassCard.jsx";
 import StatCard from "../components/StatCard.jsx";
 
 function Landing() {
+  const [heroData, setHeroData] = useState({
+    aqi: "--",
+    status: "Search",
+    city: ""
+  });
+
+  useEffect(() => {
+
+    async function loadLastCity() {
+
+      const savedCity =
+        localStorage.getItem("lastCity");
+
+      if (!savedCity) return;
+
+      try {
+
+        const response =
+          await api.get(
+            `/air-quality/${savedCity}`
+          );
+
+        setHeroData({
+          aqi: response.data.aqi,
+          status: response.data.status,
+          city: response.data.city
+        });
+
+      } catch(error){
+        console.log(error);
+      }
+    }
+
+    loadLastCity();
+
+  }, []);
   return (
     <div>
       <section className="hero-section">
@@ -15,6 +52,10 @@ function Landing() {
             Smart air intelligence for healthier days
           </motion.p>
           <h1>AirCare AI</h1>
+          <p>
+            {heroData.city &&
+            `Last searched: ${heroData.city}`}
+          </p>
           <p className="hero-text">
             Track air quality, weather stress, UV exposure, and personal health guidance in one clean dashboard.
           </p>
@@ -24,14 +65,22 @@ function Landing() {
           </div>
         </div>
         <div className="hero-visual">
-          <AqiOrb value={72} status="Moderate" />
+          <AqiOrb
+            value={heroData.aqi}
+            status={heroData.status}
+          />
           <div className="cloud cloud-one" />
           <div className="cloud cloud-two" />
         </div>
       </section>
 
       <section className="stats-grid">
-        <StatCard icon={<Gauge />} label="Live AQI" value="72" tone="good" />
+        <StatCard
+          icon={<Gauge />}
+          label="Live AQI"
+          value={heroData.aqi}
+          tone="good"
+        />
         <StatCard icon={<Wind />} label="Wind Speed" value="18 km/h" />
         <StatCard icon={<ShieldCheck />} label="Health Score" value="84%" tone="good" />
       </section>
