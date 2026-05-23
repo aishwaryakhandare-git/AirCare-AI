@@ -8,8 +8,10 @@ import GlassCard from "../components/GlassCard.jsx";
 import StatCard from "../components/StatCard.jsx";
 
 function Landing() {
+
+  const location = useLocation();
+
   const [heroData, setHeroData] = useState({
-    const location = useLocation();
     aqi: "--",
     status: "Search",
     city: ""
@@ -22,7 +24,7 @@ function Landing() {
       const savedCity =
         localStorage.getItem("lastCity");
 
-        console.log("Saved:", savedCity);
+      console.log("Saved:", savedCity);
 
       if (!savedCity) return;
 
@@ -46,8 +48,8 @@ function Landing() {
 
     loadLastCity();
 
-}, [location.pathname]);
-
+  }, [location.pathname]);
+  
   return (
     <div>
       <section className="hero-section">
