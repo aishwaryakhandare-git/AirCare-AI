@@ -256,6 +256,9 @@ def fetch_data_gov_air_quality(city):
     if not aqi_values:
         raise RuntimeError("Official CPCB AQI value was not available for this city.")
 
+    print("AQI VALUES:", aqi_values)
+    print("TOTAL STATIONS:", len(aqi_values))
+
     city_aqi = round(
         sum(aqi_values) / max(len(aqi_values),1)
     )
