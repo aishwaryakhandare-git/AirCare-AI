@@ -230,7 +230,12 @@ def fetch_data_gov_air_quality(city):
         )
 
         if pollutant_average is not None:
-            aqi_values.append(pollutant_average)
+
+            normalized = pollutant.lower()
+
+            # Only use AQI-driving pollutants
+            if normalized in ["pm2.5", "pm10"]:
+                aqi_values.append(pollutant_average)
 
         if station:
             stations.add(station)
