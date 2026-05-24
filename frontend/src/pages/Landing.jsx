@@ -11,11 +11,17 @@ function Landing() {
 
   const location = useLocation();
 
-  const [heroData, setHeroData] = useState({
-      aqi: "🌿",
-      status: "Breathe Better",
-      city: ""
+ const [heroData, setHeroData] = useState({
+    aqi: localStorage.getItem("lastCity") ? null : "🌿",
+    status: localStorage.getItem("lastCity")
+      ? "Welcome"
+      : "Healthy Air Starts Here",
+    city: "",
+    message: localStorage.getItem("lastCity")
+      ? "Search a city for personalized air insights"
+      : "Breathe cleaner, live healthier 🌱"
   });
+
 
   useEffect(() => {
 
