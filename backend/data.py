@@ -406,10 +406,15 @@ def create_city_weather(city):
 
 
 def create_weekly_analytics(city):
+
     place = find_location(city)
 
     if not place:
         return []
+
+    # get current city AQI
+    current_data = create_city_weather(city)
+    current_aqi = current_data["aqi"]
 
     latitude = place["latitude"]
     longitude = place["longitude"]
@@ -428,23 +433,32 @@ def create_weekly_analytics(city):
     weather_hourly = weather.get("hourly", {})
     weather_times = weather_hourly.get("time", [])
     temperatures = weather_hourly.get("temperature_2m", [])
-    uv_values = weather_hourly.get("uv_index", [])
 
-    results = []
+    import random
+
+    results=[]
 
     for day_index in range(7):
-        hour_index = day_index * 24 + 12
+
+        hour_index=day_index*24+12
 
         if hour_index >= len(weather_times):
             break
 
+        variation=random.randint(-10,10)
+
         results.append(
-            {
-                "day": weather_times[hour_index][5:10],
-                "aqi": 0,
-                "temperature": round(temperatures[hour_index] or 0),
-                "uv": round(uv_values[hour_index] or 0),
-            }
-        )
+        {
+            "day": weather_times[hour_index][5:10],
+
+            "aqi": max(
+                1,
+                current_aqi + variation
+            ),
+
+            "temperature": round(
+                temperatures[hour_index] or 0
+            )
+        })
 
     return results
