@@ -145,7 +145,24 @@ function Analytics() {
 
                   <XAxis dataKey="day"/>
                   <YAxis/>
-                  <Tooltip/>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor:"#111827",
+                      border:"1px solid #63e6be",
+                      borderRadius:"12px",
+                      color:"#ffffff"
+                    }}
+
+                    labelStyle={{
+                      color:"#ffffff",
+                      fontWeight:"bold"
+                    }}
+
+                    itemStyle={{
+                      color:"#63e6be",
+                      fontWeight:"600"
+                    }}
+                  />
 
                   <Area
                     dataKey="aqi"
@@ -176,7 +193,25 @@ function Analytics() {
 
                   <XAxis dataKey="day"/>
                   <YAxis/>
-                  <Tooltip/>
+                  <Tooltip
+                      contentStyle={{
+                        backgroundColor:"#111827",
+                        border:"1px solid #63e6be",
+                        borderRadius:"12px"
+                      }}
+
+                      labelStyle={{
+                        color:"#ffffff",
+                        fontWeight:"bold"
+                      }}
+
+                      formatter={(value,name)=>[
+                          value,
+                          name==="temperature"
+                          ? "🌡 Temperature"
+                          : "🌿 AQI"
+                      ]}
+                    />
 
                   <Line
                     type="monotone"
