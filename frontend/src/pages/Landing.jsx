@@ -12,16 +12,11 @@ function Landing() {
   const location = useLocation();
 
  const [heroData, setHeroData] = useState({
-    aqi: localStorage.getItem("lastCity") ? null : "🌿",
-    status: localStorage.getItem("lastCity")
-      ? "Welcome"
-      : "Healthy Air Starts Here",
+    aqi: null,
+    status: "Healthy Air Starts Here",
     city: "",
-    message: localStorage.getItem("lastCity")
-      ? "Search a city for personalized air insights"
-      : "Breathe cleaner, live healthier 🌱"
+    message: "Breathe cleaner, live healthier 🌱"
   });
-
 
   useEffect(() => {
 
@@ -99,7 +94,7 @@ function Landing() {
         </div>
         <div className="hero-visual">
           <AqiOrb
-            value={heroData.aqi}
+            value={heroData.aqi || "🌿"}
             status={heroData.status}
           />
           <div className="cloud cloud-one" />
