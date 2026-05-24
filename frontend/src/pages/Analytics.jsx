@@ -23,10 +23,21 @@ function Analytics() {
   const [data, setData] = useState([]);
 
   async function loadAnalytics(cityName) {
-    const response =
-      await api.get(`/analytics/${cityName}`);
 
-    setData(response.data);
+    try{
+
+      const response =
+        await api.get(
+          `/analytics/${cityName}`
+        );
+
+      setData(response.data);
+
+    }catch(error){
+
+      console.log(error);
+
+    }
   }
 
   useEffect(() => {
@@ -72,6 +83,12 @@ function Analytics() {
             className="search-bar"
             onSubmit={(event)=>{
               event.preventDefault();
+
+              localStorage.setItem(
+                "lastCity",
+                city
+              );
+
               loadAnalytics(city);
             }}
           >
