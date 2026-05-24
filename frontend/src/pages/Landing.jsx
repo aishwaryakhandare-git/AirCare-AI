@@ -13,7 +13,7 @@ function Landing() {
 
  const [heroData, setHeroData] = useState({
     aqi: null,
-    status: "Healthy Air Starts Here",
+    status: "AIR QUALITY",
     city: "",
     message: "Breathe cleaner, live healthier 🌱"
   });
