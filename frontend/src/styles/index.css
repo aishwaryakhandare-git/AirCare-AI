@@ -431,14 +431,27 @@ body[data-theme="light"] .stat-card p {
 
 .search-bar input,
 .health-form input {
-  width: 100%;
-  min-height: 46px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: inherit;
-  padding: 0 14px;
-  outline: 0;
+  width:100%;
+  min-height:46px;
+  border-radius:8px;
+  padding:0 14px;
+  outline:0;
+}
+
+body[data-theme="dark"] .search-bar input,
+body[data-theme="dark"] .health-form input{
+
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.08);
+  color:#eef8ff;
+}
+
+body[data-theme="light"] .search-bar input,
+body[data-theme="light"] .health-form input{
+
+  border:1px solid rgba(16,32,44,0.22);
+  background:rgba(255,255,255,0.92);
+  color:#10202c;
 }
 
 .suggestions {
@@ -494,8 +507,15 @@ body[data-theme="light"] .stat-card p {
 .health-form label {
   display: grid;
   gap: 8px;
-  color: rgba(238, 248, 255, 0.72);
   font-weight: 800;
+}
+
+body[data-theme="dark"] .health-form label{
+  color: rgba(238,248,255,0.72);
+}
+
+body[data-theme="light"] .health-form label{
+  color:#10202c;
 }
 
 .data-source {
