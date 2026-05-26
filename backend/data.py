@@ -42,7 +42,9 @@ def fetch_json(url, params):
         f"{url}?{query}",
         headers={
             "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+            "Accept":"application/json",
+            "Referer":"https://aircare-ai-1.onrender.com"
         }
     )
 
@@ -54,15 +56,25 @@ def fetch_json(url, params):
 
 def post_json(url, params, body):
     query = urllib.parse.urlencode(params)
+
     request = urllib.request.Request(
         f"{url}?{query}",
         data=json.dumps(body).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "User-Agent": "AirCare-AI/1.0",
+            "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+            "Accept": "application/json",
+            "Referer": "https://aircare-ai-1.onrender.com"
         },
         method="POST",
     )
+
+    with urllib.request.urlopen(request, timeout=20) as response:
+        return json.loads(
+            response.read().decode("utf-8")
+        )
+    
 
     with urllib.request.urlopen(request, timeout=20) as response:
         return json.loads(response.read().decode("utf-8"))
