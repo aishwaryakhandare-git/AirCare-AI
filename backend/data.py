@@ -7,6 +7,7 @@ DATA_GOV_AQI_RESOURCE = "3b01bcb8-0b14-4abf-b6f2-c1bfd384ba69"
 DATA_GOV_AQI_URL = f"https://api.data.gov.in/resource/{DATA_GOV_AQI_RESOURCE}"
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+OPEN_METEO_AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 GOOGLE_AIR_QUALITY_URL = "https://airquality.googleapis.com/v1/currentConditions:lookup"
 
 INDIAN_PLACES = [
@@ -138,6 +139,27 @@ def get_aqi_status(aqi):
     if aqi <= 400:
         return "Very Poor"
     return "Severe"
+
+
+INDIA_AQI_BREAKPOINTS = {
+    "pm25": [(0, 30, 0, 50), (31, 60, 51, 100), (61, 90, 101, 200), (91, 120, 201, 300), (121, 250, 301, 400), (251, 500, 401, 500)],
+    "pm10": [(0, 50, 0, 50), (51, 100, 51, 100), (101, 250, 101, 200), (251, 350, 201, 300), (351, 430, 301, 400), (431, 600, 401, 500)],
+    "no2": [(0, 40, 0, 50), (41, 80, 51, 100), (81, 180, 101, 200), (181, 280, 201, 300), (281, 400, 301, 400), (401, 1000, 401, 500)],
+    "o3": [(0, 50, 0, 50), (51, 100, 51, 100), (101, 168, 101, 200), (169, 208, 201, 300), (209, 748, 301, 400), (749, 1000, 401, 500)],
+    "so2": [(0, 40, 0, 50), (41, 80, 51, 100), (81, 380, 101, 200), (381, 800, 201, 300), (801, 1600, 301, 400), (1601, 2000, 401, 500)],
+    "co": [(0, 1, 0, 50), (1.1, 2, 51, 100), (2.1, 10, 101, 200), (10.1, 17, 201, 300), (17.1, 34, 301, 400), (34.1, 50, 401, 500)],
+}
+
+
+def calculate_india_sub_index(pollutant, value):
+    if value is None:
+        return None
+
+    for low_value, high_value, low_index, high_index in INDIA_AQI_BREAKPOINTS[pollutant]:
+        if value <= high_value:
+            return round(((high_index - low_index) / (high_value - low_value)) * (value - low_value) + low_index)
+
+    return 500
 
 
 def calculate_heat_index(temperature, humidity):
@@ -354,6 +376,7 @@ def fetch_google_air_quality(latitude, longitude):
         "displayName": local_index.get("displayName"),
         "dominantPollutant": local_index.get("dominantPollutant", "N/A").upper(),
         "category": local_index.get("category"),
+        "stationName": "Google local AQI for searched city coordinates",
         "updatedAt": data.get("dateTime"),
         "pollutants": {
             "pm25": pollutants.get("pm2.5") or pollutants.get("pm25"),
@@ -363,17 +386,67 @@ def fetch_google_air_quality(latitude, longitude):
             "o3": pollutants.get("o3"),
             "so2": pollutants.get("so2"),
         },
+        "source": "Google Air Quality API local AQI",
+    }
+
+
+def fetch_open_meteo_estimated_air_quality(latitude, longitude):
+    data = fetch_json(
+        OPEN_METEO_AIR_QUALITY_URL,
+        {
+            "latitude": latitude,
+            "longitude": longitude,
+            "current": "pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,ozone,sulphur_dioxide",
+            "timezone": "auto",
+        },
+    )
+
+    current = data.get("current", {})
+    pollutants = {
+        "pm25": current.get("pm2_5"),
+        "pm10": current.get("pm10"),
+        "co": (current.get("carbon_monoxide") or 0) / 1000,
+        "no2": current.get("nitrogen_dioxide"),
+        "o3": current.get("ozone"),
+        "so2": current.get("sulphur_dioxide"),
+    }
+
+    sub_indices = {}
+
+    for pollutant, value in pollutants.items():
+        sub_index = calculate_india_sub_index(pollutant, value)
+        if sub_index is not None:
+            sub_indices[pollutant] = sub_index
+
+    dominant_pollutant = max(sub_indices, key=sub_indices.get)
+    estimated_aqi = sub_indices[dominant_pollutant]
+
+    return {
+        "aqi": estimated_aqi,
+        "displayName": "Estimated India-style AQI",
+        "dominantPollutant": dominant_pollutant.upper(),
+        "category": get_aqi_status(estimated_aqi),
+        "stationName": "Open-Meteo modelled data for searched city coordinates",
+        "updatedAt": current.get("time"),
+        "pollutants": pollutants,
+        "source": "Open-Meteo estimated air-quality fallback",
     }
 
 
 def fetch_best_air_quality(city, latitude, longitude):
     if os.getenv("DATA_GOV_API_KEY"):
-        return fetch_data_gov_air_quality(city)
+        try:
+            return fetch_data_gov_air_quality(city)
+        except Exception as error:
+            print("DATA.GOV AQI FAILED, USING FALLBACK:", error)
 
     if os.getenv("GOOGLE_AIR_QUALITY_API_KEY"):
-        return fetch_google_air_quality(latitude, longitude)
+        try:
+            return fetch_google_air_quality(latitude, longitude)
+        except Exception as error:
+            print("GOOGLE AQI FAILED, USING FALLBACK:", error)
 
-    raise RuntimeError("DATA_GOV_API_KEY is missing. Use a free data.gov.in key, or use GOOGLE_AIR_QUALITY_API_KEY if you have Google billing.")
+    return fetch_open_meteo_estimated_air_quality(latitude, longitude)
 
 
 def create_city_weather(city):
