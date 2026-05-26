@@ -6,8 +6,8 @@ const links = [
   { path: "/", label: "Home", icon: Home },
   { path: "/dashboard", label: "Dashboard", icon: Activity },
   { path: "/recommendations", label: "Health", icon: HeartPulse },
-  { path: "/favorites", label: "Favorites", icon: MapPin },
   { path: "/analytics", label: "Analytics", icon: BarChart3 },
+  { path: "/favorites", label: "Favorites", icon: MapPin },
   { path: "/about", label: "About", icon: Info }
 ];
 
