@@ -34,11 +34,24 @@ def get_air_quality(city):
 
     try:
         air_quality = create_city_weather(city)
-    except RuntimeError as error:
-        return jsonify({"message": str(error)}), 503
-    except Exception:
-        return jsonify({"message": "Could not load AQI data right now."}), 503
 
+    except RuntimeError as error:
+        print("RUNTIME ERROR:", error)
+
+        return jsonify({
+            "message": str(error),
+            "error": str(error)
+        }),503
+
+
+    except Exception as error:
+        print("FULL ERROR:", error)
+
+        return jsonify({
+            "message":"Could not load AQI data right now.",
+            "error": str(error)
+        }),503
+    
     if not air_quality:
         return jsonify({"message": "Location not found."}), 404
 
