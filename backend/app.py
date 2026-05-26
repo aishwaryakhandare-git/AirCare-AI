@@ -9,7 +9,13 @@ from database import get_connection, rows_to_dicts, setup_database
 from recommendations import create_recommendations
 
 app = Flask(__name__)
-CORS(app)
+CORS(
+    app,
+    origins=[
+        "http://localhost:5173",
+        "https://aircare-ai-1.onrender.com",
+    ],
+)
 
 setup_database()
 
@@ -48,7 +54,7 @@ def get_air_quality(city):
         print("FULL ERROR:", error)
 
         return jsonify({
-            "message":"Could not load AQI data right now.",
+            "message": "Could not load AQI data right now. Check backend environment variables and API source access.",
             "error": str(error)
         }),503
     
