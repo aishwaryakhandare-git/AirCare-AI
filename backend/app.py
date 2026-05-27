@@ -11,7 +11,7 @@ CURRENT_DIR = Path(__file__).resolve().parent
 if str(CURRENT_DIR) not in sys.path:
     sys.path.insert(0, str(CURRENT_DIR))
 
-from data import create_city_weather, create_suggestions, create_weekly_analytics
+from data import check_data_gov_connection, create_city_weather, create_suggestions, create_weekly_analytics
 from database import get_connection, rows_to_dicts, setup_database
 from recommendations import create_recommendations
 
@@ -30,6 +30,11 @@ setup_database()
 @app.get("/")
 def home():
     return jsonify({"message": "AirCare AI Python API is running."})
+
+
+@app.get("/api/debug/data-gov")
+def debug_data_gov():
+    return jsonify(check_data_gov_connection())
 
 
 @app.get("/api/air-quality/suggestions/<query>")

@@ -449,6 +449,42 @@ def fetch_best_air_quality(city, latitude, longitude):
     return fetch_open_meteo_estimated_air_quality(latitude, longitude)
 
 
+def check_data_gov_connection():
+    api_key = os.getenv("DATA_GOV_API_KEY")
+
+    result = {
+        "resource": DATA_GOV_AQI_RESOURCE,
+        "keyPresent": bool(api_key),
+        "keyLength": len(api_key) if api_key else 0,
+        "keyPreview": f"{api_key[:4]}...{api_key[-4:]}" if api_key and len(api_key) >= 8 else None,
+    }
+
+    if not api_key:
+        result["ok"] = False
+        result["error"] = "DATA_GOV_API_KEY is missing."
+        return result
+
+    try:
+        data = fetch_json(
+            DATA_GOV_AQI_URL,
+            {
+                "api-key": api_key,
+                "format": "json",
+                "limit": 1,
+            },
+        )
+
+        result["ok"] = True
+        result["recordCount"] = len(data.get("records", []))
+        result["title"] = data.get("title")
+        result["sampleRecord"] = data.get("records", [{}])[0] if data.get("records") else None
+        return result
+    except Exception as error:
+        result["ok"] = False
+        result["error"] = str(error)
+        return result
+
+
 def create_city_weather(city):
     place = find_location(city)
 
