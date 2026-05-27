@@ -9,6 +9,7 @@ GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
 OPEN_METEO_AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 GOOGLE_AIR_QUALITY_URL = "https://airquality.googleapis.com/v1/currentConditions:lookup"
+WAQI_URL = "https://api.waqi.info/feed"
 
 INDIAN_PLACES = [
     "Delhi",
@@ -390,6 +391,47 @@ def fetch_google_air_quality(latitude, longitude):
     }
 
 
+def fetch_waqi_air_quality(city):
+    token = os.getenv("WAQI_API_TOKEN") or os.getenv("AQICN_API_TOKEN")
+
+    if not token:
+        raise RuntimeError("WAQI_API_TOKEN is missing.")
+
+    data = fetch_json(
+        f"{WAQI_URL}/{urllib.parse.quote(city.strip())}/",
+        {"token": token},
+    )
+
+    if data.get("status") != "ok":
+        raise RuntimeError(data.get("data") or "WAQI AQI was not available.")
+
+    station_data = data.get("data", {})
+    aqi = station_data.get("aqi")
+
+    if not isinstance(aqi, int):
+        raise RuntimeError("WAQI did not return a numeric AQI.")
+
+    iaqi = station_data.get("iaqi", {})
+
+    return {
+        "aqi": aqi,
+        "displayName": "AQI from WAQI/AQICN",
+        "dominantPollutant": station_data.get("dominentpol", "N/A").upper(),
+        "category": get_aqi_status(aqi),
+        "stationName": station_data.get("city", {}).get("name") or f"{city} monitoring station",
+        "updatedAt": station_data.get("time", {}).get("s"),
+        "pollutants": {
+            "pm25": iaqi.get("pm25", {}).get("v"),
+            "pm10": iaqi.get("pm10", {}).get("v"),
+            "co": iaqi.get("co", {}).get("v"),
+            "no2": iaqi.get("no2", {}).get("v"),
+            "o3": iaqi.get("o3", {}).get("v"),
+            "so2": iaqi.get("so2", {}).get("v"),
+        },
+        "source": "WAQI/AQICN real-time city/station AQI",
+    }
+
+
 def fetch_open_meteo_estimated_air_quality(latitude, longitude):
     data = fetch_json(
         OPEN_METEO_AIR_QUALITY_URL,
@@ -434,6 +476,12 @@ def fetch_open_meteo_estimated_air_quality(latitude, longitude):
 
 
 def fetch_best_air_quality(city, latitude, longitude):
+    if os.getenv("WAQI_API_TOKEN") or os.getenv("AQICN_API_TOKEN"):
+        try:
+            return fetch_waqi_air_quality(city)
+        except Exception as error:
+            print("WAQI AQI FAILED, USING NEXT SOURCE:", error)
+
     if os.getenv("DATA_GOV_API_KEY"):
         try:
             return fetch_data_gov_air_quality(city)

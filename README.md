@@ -16,7 +16,15 @@ Install all dependencies:
 npm run install:all
 ```
 
-For no-payment official India AQI, create a free data.gov.in API key and set it before starting.
+For a simple no-payment live AQI source, create a free WAQI/AQICN API token and set it before starting:
+
+```bash
+$env:WAQI_API_TOKEN="your_waqi_token_here"
+```
+
+Token page: https://aqicn.org/data-platform/token/
+
+Optional official India source: create a data.gov.in API key and set:
 
 PowerShell:
 
@@ -52,4 +60,4 @@ frontend/   React application
 backend/    Python Flask REST API and SQLite database
 ```
 
-AQI is sourced from CPCB Sameer National AQI via data.gov.in when `DATA_GOV_API_KEY` is set. Weather values are sourced from Open-Meteo.
+AQI source priority: WAQI/AQICN token, then CPCB/data.gov.in, then Google Air Quality API, then Open-Meteo estimated fallback. Weather values are sourced from Open-Meteo.
