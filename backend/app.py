@@ -1,8 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
+import os
+import sys
+from pathlib import Path
 
 load_dotenv()
+
+CURRENT_DIR = Path(__file__).resolve().parent
+if str(CURRENT_DIR) not in sys.path:
+    sys.path.insert(0, str(CURRENT_DIR))
 
 from data import create_city_weather, create_suggestions, create_weekly_analytics
 from database import get_connection, rows_to_dicts, setup_database
