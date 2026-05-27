@@ -1,63 +1,41 @@
-# AirCare AI
+# AirCare AI 🌿
 
-AirCare AI is a premium full-stack Air Quality Index and Smart Health Assistant web app.
+AirCare AI – a modern full-stack air quality monitoring platform designed to provide real-time AQI insights, environmental analytics, and personalized health recommendations through a clean and interactive dashboard experience.
+
+Users can search any city to instantly fetch live air quality data along with additional environmental parameters such as temperature, humidity, UV index, pollutant concentration, and overall AQI status. The platform helps users better understand pollutants like PM2.5, PM10, CO, NO₂, SO₂, and O₃ through simplified visual analytics and health-focused insights.
+
+## How It Works
+
+- Search for a city using the smart AQI dashboard  
+- The platform fetches real-time air quality data using live AQI APIs  
+- Displays AQI levels, temperature, UV index, humidity, and pollutant information  
+- Generates personalized health and safety recommendations based on pollution conditions  
+- Visualizes weekly AQI trends and environmental analytics for better awareness  
+
+## Pages Included
+
+- Home Page  
+- AQI Dashboard  
+- Health Recommendations  
+- Analytics Dashboard  
+- Favorites Management  
+- About Page  
+
+## Features
+
+- Real-time AQI monitoring  
+- Interactive pollution analytics  
+- Smart city search suggestions  
+- Personalized health recommendations  
+- Favorite cities management  
+- Responsive modern UI  
+- Live AQI API integration  
+
+## Data Sources
+
+- WAQI / AQICN API for live air quality data  
+- Open-Meteo API for weather and environmental metrics  
 
 ## Tech Stack
 
-- Frontend: React, Vite, Framer Motion, Recharts, React Router
-- Backend: Python, Flask
-- Database: SQLite SQL database
-
-## Run The Project
-
-Install all dependencies:
-
-```bash
-npm run install:all
-```
-
-For a simple no-payment live AQI source, create a free WAQI/AQICN API token and set it before starting:
-
-```bash
-$env:WAQI_API_TOKEN="your_waqi_token_here"
-```
-
-Token page: https://aqicn.org/data-platform/token/
-
-Optional official India source: create a data.gov.in API key and set:
-
-PowerShell:
-
-```bash
-$env:DATA_GOV_API_KEY="your_data_gov_key_here"
-```
-
-Command Prompt:
-
-```bash
-set DATA_GOV_API_KEY=your_data_gov_key_here
-```
-
-Optional: if you already have Google Cloud billing, you can use Google Air Quality API instead:
-
-```bash
-$env:GOOGLE_AIR_QUALITY_API_KEY="your_google_key_here"
-```
-
-Start frontend and backend together:
-
-```bash
-npm run dev
-```
-
-Frontend: http://localhost:5173  
-Backend: http://localhost:5000
-
-## Folder Structure
-
-```text
-frontend/   React application
-backend/    Python Flask REST API and SQLite database
-```
-
-AQI source priority: WAQI/AQICN token, then CPCB/data.gov.in, then Google Air Quality API, then Open-Meteo estimated fallback. Weather values are sourced from Open-Meteo.
+React.js • Flask • Python • SQLite • AQICN API • Open-Meteo API
