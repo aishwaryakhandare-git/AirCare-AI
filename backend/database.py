@@ -1,8 +1,10 @@
 import sqlite3
+import os
+import tempfile
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
-DATABASE_PATH = BASE_DIR / "aircare.db"
+DATABASE_PATH = Path(tempfile.gettempdir()) / "aircare.db" if os.getenv("VERCEL") else BASE_DIR / "aircare.db"
 SCHEMA_PATH = BASE_DIR / "schema.sql"
 
 
