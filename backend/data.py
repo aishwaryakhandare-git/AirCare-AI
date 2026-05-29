@@ -397,6 +397,10 @@ def fetch_waqi_air_quality(city):
     if not token:
         raise RuntimeError("WAQI_API_TOKEN is missing.")
 
+    print("WAQI TOKEN FOUND:", bool(token))
+    print("TOKEN START:", token[:5])
+    print("CITY:", city)
+
     data = fetch_json(
         f"{WAQI_URL}/{urllib.parse.quote(city.strip())}/",
         {"token": token},
